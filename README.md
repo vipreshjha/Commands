@@ -11,8 +11,10 @@ Find Process running on a specific port Windows
 netstat -aon | find /i "listening" | netstat -ano | findstr :4000
 
 Kill process in Windows
+
     taskkill /PID 26148 /F
 
 Start a http server i Python
+
     python3 -m http.server 8888
 
