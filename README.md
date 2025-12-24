@@ -19,4 +19,5 @@ Start a http server i Python
     python3 -m http.server 8888
 
 Convert between Encodings
+    
     iconv -f utf-16le -t utf-8 /mnt/c/Users/20250819120830/data.csv | awk -F',' '$7 ~ /793007/'
