@@ -20,6 +20,7 @@ Find Process running on a specific port Macbook
     netstat -vanp tcp | grep 3000
     
 Kill process in Macbook
+    
     kill -9 <PID>
 
 Start a http server i Python
