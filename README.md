@@ -14,6 +14,14 @@ Kill process in Windows
 
     taskkill /PID 26148 /F
 
+Find Process running on a specific port Macbook
+
+    lsof -i tcp:3000
+    netstat -vanp tcp | grep 3000
+    
+Kill process in Macbook
+    kill -9 <PID>
+
 Start a http server i Python
 
     python3 -m http.server 8888
