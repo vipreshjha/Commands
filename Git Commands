@@ -1,0 +1,70 @@
+How to find your main branch name
+	git remote show origin | grep "HEAD branch"
+
+	This will output something like HEAD branch: main or HEAD branch: master, revealing the exact name you need.
+
+Clean and Abort merge in to develop
+	If you haven't run the git commit command yet, you can instantly undo the merge and completely clean your local develop branch by running:
+		git merge --abort
+		git reset --hard HEAD
+	Switch back to your Feature Branch
+		git checkout feature/eventsMigration
+
+
+Squash multiple commits into single commit
+	Move your branch pointer back to the exact spot where it first split away from develop: bash
+		git reset --hard $(git merge-base feature/eventsMigration develop)
+	Pull the final state of your files back into your staging area in one single step:bash
+		git checkout feature/eventsMigration@{1} -- .
+	Commit everything into your single squash commit:bash
+		git add -A
+		git commit -m "Migrate events system to new schema"
+	Force Push to update your remote branch Since your local branch now has a brand-new, clean history, update your remote branch on the server:bash
+		git push --force-with-lease
+
+	Once you run these, try typing git log --oneline on your branch. You should see exactly one single commit representing all your hard work! 
+
+how does git reset --hard $(git merge-base feature/eventsMigration develop) command works?
+
+	This command is a clever shortcut designed to rewind your branch's history back to its exact "birth point," completely ignoring any commits or messy merges that happened afterward.
+	To understand exactly how it works, we have to break it down into two parts: the inside command and the outside command.
+
+	Part 1: The Inside Command — git merge-base
+		bgit merge-base feature/eventsMigration develop
+		What it does: It looks at the history of your feature branch and the history of develop, traces them backward, and finds the exact common ancestor commit where the two branches originally split apart.Why it matters here: Even though you merged develop into your branch multiple times later on, this command specifically hunts for the very first common point before your feature work began.The output: It outputs a single, specific 40-character commit hash (for example: a1b2c3d...).
+	Part 2: The Outside Command — git reset --hard
+		Once the inside command finds that ancestral commit hash, the computer automatically swaps it into the main command, making it look like this to Git:bash
+		git reset --hard a1b2c3d...
+
+	git reset: This changes where your current branch pointer points.
+	--hard: This tells Git to completely wipe out the local commit history, the staging area, and your working directory, forcing them all to match the target commit exactly.
+
+
+how does git checkout feature/eventsMigration@{1} -- . command work?
+
+	This command is a brilliant Git "time machine" trick. It allows you to reach back into Git's hidden memory logs, grab a perfect snapshot of your files from right before you ran the destructive 
+		git reset --hard command,
+	 and pull them into your current directory.
+	 Here is exactly how it breaks down into three distinct pieces:
+	 1. The Magic Link: feature/eventsMigration@{1}
+	 	This utilizes a hidden, local safety net in Git called the Reflog (Reference Log).
+	 	The Reflog acts like a history log of your branch pointer itself. Every time your branch moves (like when you commit, checkout, or reset), Git records its position.
+	 	The notation @{1} means "where this branch was exactly 1 action ago."
+	 	Since your last action was the git reset --hard command, feature/eventsMigration@{1} points directly to the tip of your branch right before you wiped out its history. It still knows where all your completed work is.
+	 2. The Stop Sign: --
+	 	The double-dash is a syntax separator used in many Git commands.
+	 	It tells Git: "Everything before this dash is a commit or a branch name, and everything after this dash is a file path."
+	 	This prevents Git from getting confused if you happen to have a file and a branch named the exact same thing.
+	 3. The Target: .
+	 	The dot represents your current working directory (and everything inside it).
+
+	 Putting it all together: The Complete Action
+	 	When you press Enter on git checkout feature/eventsMigration@{1} -- ., you are telling Git:"Go back to the snapshot of my branch exactly one step ago before I reset it. Grab every single file from that moment, and overwrite my current folder (.) with them."
+
+	 Why this is the ultimate squash cheat code:
+	 	Because you previously used git reset --hard to jump back to the birth point of your branch, your history is completely clean. When you run this checkout command, all your final, completed code is dumped into your folder as unstaged changes.
+	 	Git looks at these files and says, "Hey, these files look completely different from the ancient birth point we are currently standing on!"This sets you up perfectly for Step 3: you simply stage them (git add -A) and commit them (git commit). Because Git is only comparing the absolute beginning to your absolute end, it completely bypasses all the messy intermediate merges and conflicts you experienced along the way.
+
+
+
+
