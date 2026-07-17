@@ -32,26 +32,33 @@ Convert between Encodings
     iconv -f utf-16le -t utf-8 /mnt/c/Users/20250819120830/data.csv | awk -F',' '$7 ~ /793007/'
 
 
-##To configure Git SSH keys
-##On Mac Restart run command to store identity inside ssh agent
-# Add your specific key
-ssh-add ~/.ssh/id_****** 2>/dev/null
+# To configure Git SSH keys
 
+On Mac Restart run command to store identity inside ssh agent
 
-##To check if ssh-agent is running or not
-if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-    eval $(ssh-agent -s)
-fi
+Add your specific key
+
+    ssh-add ~/.ssh/id_****** 2>/dev/null
+
+To check if ssh-agent is running or not
+
+    if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+        eval $(ssh-agent -s)
+    fi
 
 Alternamte method to above
+
 Edit/Create your SSH config file:bash
-  nano ~/.ssh/config
+
+    nano ~/.ssh/config
 
 Add these lines:
-  Host *
-  AddKeysToAgent yes
-  UseKeychain yes
-  IdentityFile ~/.ssh/id_******
+
+    Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_******
 
 Add the key once to the keychain:bash
-  ssh-add --apple-use-keychain ~/.ssh/id_******
+
+    ssh-add --apple-use-keychain ~/.ssh/id_******
